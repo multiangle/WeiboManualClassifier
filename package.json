@@ -1,0 +1,13 @@
+{
+  "name": "WeiboClassifier",
+  "version": "1.0.0",
+  "description": "A classifier for weibo",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "multiangle",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  }
+}

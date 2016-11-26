@@ -9,5 +9,9 @@
   "author": "multiangle",
   "devDependencies": {
     "electron": "^1.4.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.1.1"
   }
 }

@@ -1,44 +1,72 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Manual Weibo Classifier</title>
-        <!--<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" crossorigin="anonymous">-->
-        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" crossorigin="anonymous">
-        <!--<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>-->
-        <!--<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
-        <style>
-            div#mainContent{
-                margin-top:20px
-            }
-        </style>
-    </head>
-    <body>
+
+<head>
+    <meta charset="utf-8">
+    <title>Manual Weibo Classifier</title>
+
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        window.$ = window.jQuery = require('../node_modules/jquery/dist/jquery.min.js');
+        window.$ = window.bootstrap = require('../node_modules/bootstrap/dist/js/bootstrap.min.js');
+    </script>
+
+    <script>
+        jQuery(document).ready(($)=>{
+            $("#commit").click(()=>{
+                console.log("23333") ;
+            })
+        })
+    </script>
+
+    <!--<style>
+        div#mainContent {
+            margin-top: 20px
+        }
+    </style>-->
+</head>
+
+<body>
     <div class="container">
-        <div class="row clearfix" id="mainContent">
+        <div class="row clearfix" id="mainContent" style="margin-top:20px">
             <div class="jumbotron">
                 <!--<h1>我的第一个 Bootstrap 页面</h1>-->
-                <p>Microblog Content Here</p> 
+                <p>Microblog Content Here</p>
             </div>
         </div>
         <div class="row clearfix">
             <div class="col-sm-4">
                 <h2>Emotion</h2>
-                <p>AAAAAA</p>
-                <p>aaaaaaaaaaaaaaaaaaaaaa</p>
+                <div class="btn-group">
+                    <button class="btn btn-default mbtn" type="button">快乐</button>
+                    <button class="btn btn-default mbtn" type="button">愤怒</button>
+                    <button class="btn btn-default mbtn" type="button">恐惧</button>
+                    <button class="btn btn-default mbtn" type="button">哀伤</button>
+                </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-8">
                 <h2>Category</h2>
-                <p>BBBBBB</p>
-                <p>bbbbbbbbbbbbbbbbbbbbb</p>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default">
+		                <input type="checkbox"> 选项 1
+	                </label>
+                    <label class="btn btn-default">
+		                <input type="checkbox"> 选项 2
+	                </label>
+                    <label class="btn btn-default">
+		                <input type="checkbox"> 选项 3
+	                </label>
+                </div>
             </div>
+        </div>
+        <div class="row clearfix" id="commit_div" style="margin-top:20px">
             <div class="col-sm-4">
-                <h3>第三列</h3>        
-                <p>CCCCCC</p>
-                <p>ccccccccccccccccccccc</p>
+                <!--btn是一个带有圆角的按钮样式，而btn-primary是一个淡蓝色的按钮样式，两者一起，就是淡蓝色的圆角按钮-->
+                <button type="button" class="btn btn-primary" id="commit">COMMIT</button>
             </div>
         </div>
     </div>
+    
+</body>
 
-    </body>
 </html>

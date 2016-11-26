@@ -14,7 +14,8 @@
     <script>
         jQuery(document).ready(($)=>{
             $("#commit").click(()=>{
-                console.log("23333") ;
+                let buttons = $(".mbtn") ;
+                console.log(buttons.length) ;
             })
         })
     </script>
@@ -37,7 +38,7 @@
         <div class="row clearfix">
             <div class="col-sm-4">
                 <h2>Emotion</h2>
-                <div class="btn-group">
+                <div class="btn-group" id="emotion">
                     <button class="btn btn-default mbtn" type="button">快乐</button>
                     <button class="btn btn-default mbtn" type="button">愤怒</button>
                     <button class="btn btn-default mbtn" type="button">恐惧</button>

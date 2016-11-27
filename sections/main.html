@@ -7,24 +7,95 @@
 
     <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script>
-        window.$ = window.jQuery = require('../node_modules/jquery/dist/jquery.min.js');
-        window.$ = window.bootstrap = require('../node_modules/bootstrap/dist/js/bootstrap.min.js');
+        // window.$ = window.jQuery = require('../node_modules/jquery/dist/jquery.min.js');
+        window.$ = window.jQuery = require('jquery') ;
+        // require('../node_modules/bootstrap/dist/js/bootstrap.min.js');
+        require('bootstrap');
+        electron = require("electron") ;
+        ipcr = electron.ipcRenderer ;
     </script>
-
-    <script>
-        jQuery(document).ready(($)=>{
-            $("#commit").click(()=>{
-                let buttons = $(".mbtn") ;
-                console.log(buttons.length) ;
-            })
-        })
-    </script>
-
-    <!--<style>
-        div#mainContent {
-            margin-top: 20px
+    <style>
+        label.cbtn {
+            margin-left:5px
         }
-    </style>-->
+    </style>
+    <script>
+
+        $("document").ready(function(){
+
+            init() ; // 参数初始化
+
+            $(".ebtn").click((e)=>{
+                let btn = $(e.target) ;
+                
+                let btns = $(".ebtn").get() ;
+                for(let i in btns){
+                    $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+                }
+                btn.removeClass('btn-default');
+                btn.addClass('btn-primary') ;
+                emotion_selected = btn.text() ;
+                emotion_id = emotions.indexOf(emotion_selected) ;
+                console.log(emotion_selected) ;
+            });
+
+            // commit info, and reset info
+            $("button#commit").click(()=>{
+                if (emotion_id == -1){
+                    alert("Cannot COMMIT!") ;
+                    return ;
+                }
+                
+                // 摘录信息
+                let res = {};
+                res.emotion = emotion_selected ;
+                res.id = emotion_id ;
+
+                // 重置
+                emotion_selected = "" ;
+                emotion_id = -1 ;
+                btns = $('.ebtn').get() ;
+                for(let i in btns){
+                    $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+                }
+
+                // 提交后台
+                ipcr.send('channel-commit',res) ;
+                console.log(res) ;
+            });
+            
+        })
+        
+        // hot key
+        $(document).keydown((e)=>{
+            let fmt = 'button#key-' ;
+            let types = new Array('q','w','e','r','t') ;
+            if (types.indexOf(e.key)>-1) { // 跟emotion有关的快捷键
+                $(fmt+e.key).click()
+                return ;
+            }
+
+            if (e.key == 'Enter'|| e.key==' ') $('button#commit').click() ;
+            console.log(e.key) ;
+
+            
+        });
+
+        function init(){
+            emotion_selected = "" ;     // btn-group选中的情绪
+            emotion_id = -1 ;
+            emotions = new Array() ;    // 情绪列表
+            emotion_num = 0 ;           // 情绪种类数目
+            let ebtns = $(".ebtn").get() ;
+            for(let i in ebtns){
+                let btn = $(ebtns[i]) ;
+                emotions.push(btn.text()) ;
+                emotion_num++ ;
+            }
+            console.log(emotions) ;
+        }
+        
+    </script>
 </head>
 
 <body>
@@ -39,24 +110,28 @@
             <div class="col-sm-4">
                 <h2>Emotion</h2>
                 <div class="btn-group" id="emotion">
-                    <button class="btn btn-default mbtn" type="button">快乐</button>
-                    <button class="btn btn-default mbtn" type="button">愤怒</button>
-                    <button class="btn btn-default mbtn" type="button">恐惧</button>
-                    <button class="btn btn-default mbtn" type="button">哀伤</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-q'>快乐</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-w'>愤怒</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-e'>恐惧</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-r'>哀伤</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-t'>中立</button>
                 </div>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <h2>Category</h2>
-                <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default">
-		                <input type="checkbox"> 选项 1
-	                </label>
-                    <label class="btn btn-default">
-		                <input type="checkbox"> 选项 2
-	                </label>
-                    <label class="btn btn-default">
-		                <input type="checkbox"> 选项 3
-	                </label>
+                <div class="btn-group" id="category">
+                    
+                    <button class="btn btn-default ebtn" type="button" id='key-y'>快乐</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-w'>愤怒</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-e'>恐惧</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-r'>哀伤</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-t'>中立</button>
+                    <br>
+                    <button class="btn btn-default ebtn" type="button" id='key-q'>快乐</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-w'>愤怒</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-e'>恐惧</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-r'>哀伤</button>
+                    <button class="btn btn-default ebtn" type="button" id='key-t'>中立</button>
                 </div>
             </div>
         </div>
@@ -67,7 +142,6 @@
             </div>
         </div>
     </div>
-    
 </body>
 
 </html>

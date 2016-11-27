@@ -18,7 +18,7 @@ app.on('window-all-closed', () => {
 
 function createWindow() {
     main_win = new BrowserWindow({
-        width: 1200,
+        width: 1300,
         height: 600,
         backgroundColor: '#FFEEBF',
         show: false

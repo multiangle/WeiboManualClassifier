@@ -21,11 +21,20 @@ $("document").ready(function(){
 
     $(".cbtn").click((e)=>{
         let btn = $(e.target) ;
+        let btns = $(".cbtn").get() ;
+        for(let i in btns){
+            $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+        }
+        btn.removeClass('btn-default');
+        btn.addClass('btn-primary') ;
+        let btn_text = btn.text() ;
+        category_selected = btn_text.substring(0,btn_text.length-1) ;
+        console.log(category_selected) ;
     })
 
     // commit info, and reset info
     $("button#commit").click(()=>{
-        if (emotion_id == -1){
+        if (emotion_selected=="" || category_selected==""){
             alert("Cannot COMMIT!") ;
             return ;
         }
@@ -33,12 +42,18 @@ $("document").ready(function(){
         // 摘录信息
         let res = {};
         res.emotion = emotion_selected ;
-        res.id = emotion_id ;
+        res.emotion_id = emotion_id ;
+        res.category = category_selected ;
 
         // 重置
         emotion_selected = "" ;
         emotion_id = -1 ;
-        btns = $('.ebtn').get() ;
+        let btns = $('.ebtn').get() ;
+        for(let i in btns){
+            $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+        }
+        category_selected = "" ;
+        btns = $('.cbtn').get() ;
         for(let i in btns){
             $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
         }
@@ -59,10 +74,17 @@ $(document).keydown((e)=>{
         return ;
     }
 
+    types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B') ;
+    if (types.indexOf(e.key)>-1) { // 跟category有关的快捷键
+        $(fmt+e.key).click()
+        return ;
+    }
+
     if (e.key == 'Enter'|| e.key==' ') $('button#commit').click() ;
     console.log(e.key) ;
 });
 
+// init function
 function init(){
     emotion_selected = "" ;     // btn-group选中的情绪
     emotion_id = -1 ;
@@ -74,7 +96,6 @@ function init(){
         emotions.push(btn.text()) ;
         emotion_num++ ;
     }
-    console.log(emotions) ;
 
     category_selected = "" ;
     categorys = new Array() ;   // 分类列表
@@ -83,7 +104,9 @@ function init(){
     for(let i in cbtns){
         let btn = $(cbtns[i]) ;
         let btn_text = btn.text() ;
-
-        categorys.push(btn.text()) ;
+        btn_text = btn_text.substring(0,btn_text.length-1) ;
+        categorys.push(btn_text) ;
+        category_num++ ;
     }
+    console.log(categorys) ;
 }

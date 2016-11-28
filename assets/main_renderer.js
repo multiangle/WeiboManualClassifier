@@ -1,6 +1,7 @@
 electron = require("electron") ;
 ipcr = electron.ipcRenderer ;
 
+var fetch_data = require('../assets/fetch_data.js') ;
 $("document").ready(function(){
 
     init() ; // 参数初始化
@@ -60,7 +61,9 @@ $("document").ready(function(){
 
         // 提交后台
         ipcr.send('channel-commit',res) ;
-        console.log(res) ;
+        var fetch_data = require('../assets/fetch_data.js') ;
+        let v = fetch_data.fetch_one() ;
+        console.log(v) ;
     });
             
 })

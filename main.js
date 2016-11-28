@@ -8,6 +8,8 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow; // main window
 const Menu = electron.Menu;        // menu item
 
+var fetch_data = require('./assets/fetch_data.js') ;
+
 let main_win;
 
 app.on('ready', createWindow)
@@ -19,7 +21,7 @@ app.on('window-all-closed', () => {
 function createWindow() {
     main_win = new BrowserWindow({
         width: 1300,
-        height: 600,
+        height: 650,
         backgroundColor: '#FFEEBF',
         show: false
     })
@@ -40,6 +42,8 @@ function createWindow() {
     main_win.once('ready-to-show', () => {
         main_win.show();
     })
+
+    // console.log(fetch_data.fetch_one()) ;
 }
 
 

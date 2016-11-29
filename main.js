@@ -25,6 +25,7 @@ ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送�
     dealing_data.category = res.category ;
     dealing_data.emotion = res.emotion ;
     console.log(dealing_data) ;
+    fetchData.insert(dealing_data) ;
     let new_res = fetchData.fetch_one() ; 
     dealing_data = new_res ;
     event.sender.send('channel-commit-reply',new_res) ;
@@ -42,7 +43,8 @@ function createWindow() {
         width: 1300,
         height: 750,
         backgroundColor: '#FFEEBF',
-        show: false
+        show: false,
+        icon:'./assets/imgs/huaji.jpg'
     })
 
     main_win.loadURL(url.format({

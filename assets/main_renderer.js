@@ -49,10 +49,10 @@ $("document").ready(function(){
 
     // commit info, and reset info
     $("button#commit").click(()=>{
-        // if (emotion_selected=="" || category_selected==""){
-        //     alert("Cannot COMMIT!") ;
-        //     return ;
-        // }
+        if (emotion_selected=="" || category_selected==""){
+            alert("Cannot COMMIT!") ;
+            return ;
+        }
                 
         // 摘录信息
         let res = {};
@@ -75,7 +75,7 @@ $(document).keydown((e)=>{
         return ;
     }
 
-    types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N') ;
+    types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M') ;
     if (types.indexOf(e.key)>-1) { // 跟category有关的快捷键
         $(fmt+e.key).click()
         return ;
@@ -161,8 +161,10 @@ function buildDisplayInfo(res){
         }
     }
     
+    let tm_fmt = "<p style=\"font-size:20px\">时间: %s</p>"
+    let tm = util.format(tm_fmt,res.created_at) ;
 
-    let final = user + content + pics_img;
+    let final = user + tm + content + pics_img;
 
     return final ;
 }

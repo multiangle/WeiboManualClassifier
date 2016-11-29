@@ -11,7 +11,7 @@ function fetch_batch_data(filter){
     is_fetching = true ; 
     MongoClient.connect(db_uri, (err,db)=>{
         let collection = db.collection('latest_history') ;
-        let res = collection.find().limit(100) ;
+        let res = collection.find().sort({'id':-1}).limit(100) ;
         res.toArray((err,docs)=>{
             data_storage = data_storage.concat(docs) ;
             is_fetching = false ;
@@ -74,4 +74,12 @@ module.exports.fetch_one = function(){
             return null ;
         }
     }
+}
+
+module.exports.insert = function(res){
+    let uri = 'mongodb://localhost:27017/microblog_classify' ;
+    MongoClient.connect(uri, (err,db)=>{
+        let collection = db.collection('test') ;
+        collection.insert(res) ;
+    })
 }

@@ -22,7 +22,12 @@ app.on('window-all-closed', ()=>{
 })
 
 ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送过来的信息
-    console.log(res) ;
+    dealing_data.category = res.category ;
+    dealing_data.emotion = res.emotion ;
+    console.log(dealing_data) ;
+    let new_res = fetchData.fetch_one() ; 
+    dealing_data = new_res ;
+    event.sender.send('channel-commit-reply',new_res) ;
 })
 
 ipcm.on('channel-fetch',(event)=>{      // 收到获取数据请求并返回。
@@ -35,7 +40,7 @@ ipcm.on('channel-fetch',(event)=>{      // 收到获取数据请求并返回。
 function createWindow() {
     main_win = new BrowserWindow({
         width: 1300,
-        height: 700,
+        height: 750,
         backgroundColor: '#FFEEBF',
         show: false
     })

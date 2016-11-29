@@ -10,8 +10,14 @@ $("document").ready(function(){
 
     ipcr.on('channel-fetch-reply',(event,res)=>{
         console.log(res) ;
-        display = buildDisplayInfo(res) ;
-        $("#weibo-content").append('<p style="font-size:10px">'+display+'</p>');
+        setDisplay(res) ;
+    })
+
+    ipcr.on('channel-commit-reply',(event,res)=>{
+        setDisplay(res) ;
+
+        // 重置
+        resetStatus() ;
     })
 
     $(".ebtn").click((e)=>{
@@ -43,10 +49,10 @@ $("document").ready(function(){
 
     // commit info, and reset info
     $("button#commit").click(()=>{
-        if (emotion_selected=="" || category_selected==""){
-            alert("Cannot COMMIT!") ;
-            return ;
-        }
+        // if (emotion_selected=="" || category_selected==""){
+        //     alert("Cannot COMMIT!") ;
+        //     return ;
+        // }
                 
         // 摘录信息
         let res = {};
@@ -54,14 +60,8 @@ $("document").ready(function(){
         res.emotion_id = emotion_id ;
         res.category = category_selected ;
 
-        // 重置
-        resetStatus() ;
-
         // 提交后台
         ipcr.send('channel-commit',res) ;
-        var fetch_data = require('../assets/fetch_data.js') ;
-        let v = fetch_data.fetch_one() ;
-        console.log(v) ;
     });
             
 })
@@ -75,7 +75,7 @@ $(document).keydown((e)=>{
         return ;
     }
 
-    types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B') ;
+    types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N') ;
     if (types.indexOf(e.key)>-1) { // 跟category有关的快捷键
         $(fmt+e.key).click()
         return ;
@@ -131,7 +131,7 @@ function resetStatus(){
 function buildDisplayInfo(res){
     // user 
     let display = "" ;
-    let user_fmt = "<p>名字: %s\t 描述: %d\t 粉丝: %d uid: %d</p>"
+    let user_fmt = "<p style=\"font-size:20px\">名字: %s\t 描述: %d\t 粉丝: %d uid: %d</p>"
     let user = util.format(user_fmt,
                             res.user.name,
                             res.user.description,
@@ -139,7 +139,7 @@ function buildDisplayInfo(res){
                             res.user.uid ) ;
 
     // content
-    let content_fmt = "<p>内容: %s</p>"
+    let content_fmt = "<p style=\"font-size:20px\">内容: %s</p>"
     let left_content = res.left_content ;
     let compact = "" ;
     for(let i in left_content) compact += left_content[i] ;
@@ -148,11 +148,26 @@ function buildDisplayInfo(res){
         let left_content = res.retweeted_left_content ;
         let compact = "" ;
         for(let i in left_content) compact += left_content[i] ;
-        let ret_fmt = "<p>转发内容: %s</p>"
+        let ret_fmt = "<p style=\"font-size:20px\">转发内容: %s</p>"
         content += util.format(ret_fmt, compact); 
     }
 
-    let final = user + content ;
+    let pics_img = ""
+    let pic_fmt = "<img src=\"%s\">" ;
+    if (res.pics){
+        for(let i in res.pics){
+            let tmp = util.format(pic_fmt,res.pics[i].url) ;
+            pics_img += tmp ;
+        }
+    }
+    
+
+    let final = user + content + pics_img;
 
     return final ;
+}
+
+function setDisplay(res){
+    display = buildDisplayInfo(res) ;
+    $("#weibo-content").html('<div>'+display+'</div>');
 }

@@ -11,7 +11,7 @@ function fetch_batch_data(filter){
     is_fetching = true ; 
     MongoClient.connect(db_uri, (err,db)=>{
         let collection = db.collection('latest_history') ;
-        let res = collection.find().limit(10) ;
+        let res = collection.find().limit(100) ;
         res.toArray((err,docs)=>{
             data_storage = data_storage.concat(docs) ;
             is_fetching = false ;
@@ -55,6 +55,7 @@ function pickUsefulContent(res){
 
     // other info
     valid_res.source            = res.source ;
+    valid_res.pics              = res.pics ;
 
     return valid_res ;
 }

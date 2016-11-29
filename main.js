@@ -7,21 +7,35 @@ const url = require('url');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow; // main window
 const Menu = electron.Menu;        // menu item
+const ipcm = electron.ipcMain ;
 
-var fetch_data = require('./assets/fetch_data.js') ;
+var fetchData = require('./assets/fetch_data.js') ;
 
 let main_win;
 
+var dealing_data = null ;
+
 app.on('ready', createWindow)
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', ()=>{
     if (process.platform !== 'darwin') app.quit();
+})
+
+ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送过来的信息
+    console.log(res) ;
+})
+
+ipcm.on('channel-fetch',(event)=>{      // 收到获取数据请求并返回。
+    console.log('debug from ipcm: ready to fetch data') ;
+    let res = fetchData.fetch_one() ;
+    dealing_data = res ;
+    event.sender.send('channel-fetch-reply',res) ;
 })
 
 function createWindow() {
     main_win = new BrowserWindow({
         width: 1300,
-        height: 650,
+        height: 700,
         backgroundColor: '#FFEEBF',
         show: false
     })

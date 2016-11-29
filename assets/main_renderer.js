@@ -1,3 +1,5 @@
+const util = require('util') ;
+
 electron = require("electron") ;
 ipcr = electron.ipcRenderer ;
 
@@ -5,6 +7,12 @@ var fetch_data = require('../assets/fetch_data.js') ;
 $("document").ready(function(){
 
     init() ; // 参数初始化
+
+    ipcr.on('channel-fetch-reply',(event,res)=>{
+        console.log(res) ;
+        display = buildDisplayInfo(res) ;
+        $("#weibo-content").append('<p style="font-size:10px">'+display+'</p>');
+    })
 
     $(".ebtn").click((e)=>{
         let btn = $(e.target) ;
@@ -47,17 +55,7 @@ $("document").ready(function(){
         res.category = category_selected ;
 
         // 重置
-        emotion_selected = "" ;
-        emotion_id = -1 ;
-        let btns = $('.ebtn').get() ;
-        for(let i in btns){
-            $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
-        }
-        category_selected = "" ;
-        btns = $('.cbtn').get() ;
-        for(let i in btns){
-            $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
-        }
+        resetStatus() ;
 
         // 提交后台
         ipcr.send('channel-commit',res) ;
@@ -89,6 +87,8 @@ $(document).keydown((e)=>{
 
 // init function
 function init(){
+    ipcr.send('channel-fetch') ;// 请求获得数据
+
     emotion_selected = "" ;     // btn-group选中的情绪
     emotion_id = -1 ;
     emotions = new Array() ;    // 情绪列表
@@ -111,5 +111,48 @@ function init(){
         categorys.push(btn_text) ;
         category_num++ ;
     }
-    console.log(categorys) ;
+}
+
+// reset status
+function resetStatus(){
+    emotion_selected = "" ;
+    emotion_id = -1 ;
+    let btns = $('.ebtn').get() ;
+    for(let i in btns){
+        $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+    }
+    category_selected = "" ;
+    btns = $('.cbtn').get() ;
+    for(let i in btns){
+        $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+    }
+}
+
+function buildDisplayInfo(res){
+    // user 
+    let display = "" ;
+    let user_fmt = "<p>名字: %s\t 描述: %d\t 粉丝: %d uid: %d</p>"
+    let user = util.format(user_fmt,
+                            res.user.name,
+                            res.user.description,
+                            res.user.fans_num,
+                            res.user.uid ) ;
+
+    // content
+    let content_fmt = "<p>内容: %s</p>"
+    let left_content = res.left_content ;
+    let compact = "" ;
+    for(let i in left_content) compact += left_content[i] ;
+    let content = util.format(content_fmt,compact) ;
+    if (res.is_retweeted){
+        let left_content = res.retweeted_left_content ;
+        let compact = "" ;
+        for(let i in left_content) compact += left_content[i] ;
+        let ret_fmt = "<p>转发内容: %s</p>"
+        content += util.format(ret_fmt, compact); 
+    }
+
+    let final = user + content ;
+
+    return final ;
 }

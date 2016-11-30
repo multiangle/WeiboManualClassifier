@@ -1,11 +1,12 @@
 const mongo = require('mongodb') ;
 var MongoClient = mongo.MongoClient ;
+var db_fmt = "mongodb://localhost:27017/%s" ;
 var db_uri = 'mongodb://localhost:27017/microblog_spider' ;
 
 var data_storage = new Array() ;
 var is_fetching = false ;
 
-fetch_batch_data() ;
+
 
 function fetch_batch_data(filter){
     is_fetching = true ; 

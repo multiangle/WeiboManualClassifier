@@ -1,18 +1,22 @@
 const util = require('util') ;
+const electron = require("electron") ;
 
-electron = require("electron") ;
-ipcr = electron.ipcRenderer ;
+const ipcr = electron.ipcRenderer ;
+const BrowserWindow = electron.BrowserWindow ;
 
 var fetch_data = require('../assets/fetch_data.js') ;
 $("document").ready(function(){
 
-    init() ; // 参数初始化
+    // 初始化
+    init() ; 
 
+    // 在获取到数据以后的行为(用于初始化)
     ipcr.on('channel-fetch-reply',(event,res)=>{
         console.log(res) ;
-        setDisplay(res) ;
+        if (res!=null) setDisplay(res) ;
     })
 
+    // 在提交以后从后台获取到新数据以后的行为
     ipcr.on('channel-commit-reply',(event,res)=>{
         setDisplay(res) ;
 
@@ -20,6 +24,7 @@ $("document").ready(function(){
         resetStatus() ;
     })
 
+    // emotion 按钮按下以后的行为
     $(".ebtn").click((e)=>{
         let btn = $(e.target) ;
                 
@@ -34,6 +39,7 @@ $("document").ready(function(){
         console.log(emotion_selected) ;
     });
 
+    // category 按钮按下以后的行为
     $(".cbtn").click((e)=>{
         let btn = $(e.target) ;
         let btns = $(".cbtn").get() ;
@@ -49,10 +55,10 @@ $("document").ready(function(){
 
     // commit info, and reset info
     $("button#commit").click(()=>{
-        if (emotion_selected=="" || category_selected==""){
-            alert("Cannot COMMIT!") ;
-            return ;
-        }
+        // if (emotion_selected=="" || category_selected==""){
+        //     alert("Cannot COMMIT!") ;
+        //     return ;
+        // }
                 
         // 摘录信息
         let res = {};
@@ -63,10 +69,15 @@ $("document").ready(function(){
         // 提交后台
         ipcr.send('channel-commit',res) ;
     });
+
+    // setting 按下以后的行为
+    $("button#setting").click(()=>{
+        ipcr.send("channel-setting-win") ;
+    });
             
 })
         
-// hot key
+// hot key， 快捷键设置
 $(document).keydown((e)=>{
     let fmt = 'button#key-' ;
     let types = new Array('q','w','e','r','t') ;
@@ -128,6 +139,7 @@ function resetStatus(){
     }
 }
 
+// 构建用于显示的信息
 function buildDisplayInfo(res){
     // user 
     let display = "" ;

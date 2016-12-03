@@ -5,18 +5,37 @@ var db_uri = 'mongodb://localhost:27017/microblog_spider' ;
 
 var data_storage = new Array() ;
 var is_fetching = false ;
+var acc = 0 ;   // 累加器
+var conf = null ;
+var batch_size = 100 ;
 
-
-
-function fetch_batch_data(filter){
+function fetch_batch_data(){
+    let collection_name = 'latest_history' ;
+    let filter = {} ;
+    let skip = 0 ;
+    // console.log('value of conf.filter');
+    // console.log(conf.filter) ;
+    if (conf){
+        if (conf.collection) {collection_name = conf.collection ;}
+        if (conf.filter!=null) {filter = conf.filter ;}
+        if (conf.skip) {skip = conf.skip ;}
+    }
+    console.log(filter) ;
     is_fetching = true ; 
     MongoClient.connect(db_uri, (err,db)=>{
-        let collection = db.collection('latest_history') ;
-        let res = collection.find().sort({'id':-1}).limit(100) ;
+        let collection = db.collection(collection_name) ;
+        let res ;
+        res = collection
+                .find(filter)
+                .sort({'id':-1}) 
+                .skip(skip+acc)
+                .limit(batch_size) ;
+        acc += batch_size ;
         res.toArray((err,docs)=>{
             data_storage = data_storage.concat(docs) ;
             is_fetching = false ;
         })
+        db.close() ;
     })
 }
 
@@ -82,5 +101,18 @@ module.exports.insert = function(res){
     MongoClient.connect(uri, (err,db)=>{
         let collection = db.collection('test') ;
         collection.insert(res) ;
+        db.close() ;
     })
+}
+
+module.exports.input_conf = function(new_conf){
+    // console.log('ready to change') ;
+    // console.log(new_conf)
+    if (new_conf==conf) return ;
+    else{
+        conf = new_conf ;
+        console.log(conf) ;
+        acc = 0 ;
+        fetch_batch_data() ;
+    }
 }

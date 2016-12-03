@@ -7,6 +7,40 @@
     <script>
         window.$ = window.jQuery = require('jquery') ;
         require('bootstrap');
+        ipcr = require('electron').ipcRenderer ;
+        ipcr.send('channel-fetch-config') ;
+        config = {} ;
+        ipcr.on('channel-config-ret',(event,res)=>{
+            config = res ;
+            console.log(res) ;
+            $("input#collection").attr('placeholder',res.collection) ;
+            $("input#filter").attr('placeholder',JSON.stringify(res.filter)) ;
+            $("input#skip").attr('placeholder',res.skip) ;
+        })
+        $("document").ready(()=>{
+            console.log('322'); 
+            $("#apply").click((e)=>{
+                let collection = $("input#collection").val() ;
+                collection = collection=="" ? config.collection : collection ;
+                let filter = $("input#filter").val() ;
+                filter = filter=="" ? JSON.stringify(config.filter) : filter ;
+                filter = JSON.parse(filter) ;
+                let skip = $("input#skip").val() ;
+                skip = skip=="" ? config.skip : skip ;
+                skip = parseInt(skip) ;
+                let res = {
+                    'collection': collection,
+                    'filter': filter,
+                    'skip': skip 
+                }
+                console.log(res) ;
+                ipcr.send('channel-setting-apply',res) ;
+            })
+            $("input").click((e)=>{
+                let self = $(e.target) ;
+                self.val(self.attr('placeholder')) ;
+            })
+        })
     </script>
     <style>
     input.form-control{

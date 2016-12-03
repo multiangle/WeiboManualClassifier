@@ -16,10 +16,13 @@ let main_win;
 
 var dealing_data = null ;
 
+// app 初始化
 var conf = readConfig() ;
-fetchData.fetch_batch_data() ;
+fetchData.input_conf(conf) ;
+console.log(conf)
+
+
 //todo 还需要完成fetch_data部分对config的响应和处理.以及setting有输入时的应对
-// 还要解决mongo连接数过多的问题.
 
 app.on('ready', createWindow)
 
@@ -28,11 +31,13 @@ app.on('window-all-closed', ()=>{
 })
 
 ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送过来的信息
-    dealing_data.category = res.category ;
-    dealing_data.emotion = res.emotion ;
-    console.log(dealing_data) ;
-    if (dealing_data.category!="" && dealing_data.emotion!="")
-        fetchData.insert(dealing_data) ;
+    if (dealing_data){
+        dealing_data.category = res.category ;
+        dealing_data.emotion = res.emotion ;
+        console.log(dealing_data) ;
+        if (dealing_data.category!="" && dealing_data.emotion!="")
+            fetchData.insert(dealing_data) ;
+    }
     let new_res = fetchData.fetch_one() ; 
     dealing_data = new_res ;
     event.sender.send('channel-commit-reply',new_res) ;
@@ -52,11 +57,26 @@ ipcm.on('channel-setting-win',()=>{
         show: true,
         parent: main_win
     })
+    set_win.webContents.openDevTools() ;
     set_win.loadURL(url.format({
         pathname: path.join(__dirname, 'sections/setting.html'),
         protocol: 'file:',
         slashes: true
     }))
+})
+
+ipcm.on('channel-fetch-config',(event)=>{
+    event.sender.send('channel-config-ret',conf) ;
+})
+
+ipcm.on('channel-setting-apply',(event,res)=>{ // 当apply按钮被按下时的情况
+    console.log('setting pressed') ;
+    console.log(res) ;
+    if (res==conf) return ;
+    else{
+        conf = res ;
+        fetchData.input_conf(conf) ;
+    }
 })
 
 function createWindow() {

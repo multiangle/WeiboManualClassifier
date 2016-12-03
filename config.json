@@ -1,5 +1,5 @@
 {
-    "collection":"",
-    "filter":null,
-    "skip":null
+    "collection":"latest_history", 
+    "filter":{}, 
+    "skip":0  
 }

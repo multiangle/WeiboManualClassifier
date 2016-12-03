@@ -22,7 +22,7 @@ fetchData.input_conf(conf) ;
 console.log(conf)
 
 
-//todo 还需要完成fetch_data部分对config的响应和处理.以及setting有输入时的应对
+//todo 还需要完成数据库的查询问题
 
 app.on('ready', createWindow)
 

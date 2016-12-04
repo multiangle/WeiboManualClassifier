@@ -19,7 +19,7 @@ var dealing_data = null ;
 // app 初始化
 var conf = readConfig() ;
 fetchData.input_conf(conf) ;
-console.log(conf)
+// console.log(conf)
 
 
 //todo 还需要完成数据库的查询问题
@@ -28,6 +28,7 @@ app.on('ready', createWindow)
 
 app.on('window-all-closed', ()=>{
     if (process.platform !== 'darwin') app.quit();
+    storeConfig(fetchData.fix_conf(conf)) ;
 })
 
 ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送过来的信息
@@ -113,4 +114,18 @@ function readConfig(){
     let cfg_json = JSON.parse(cfg_text) ;
     if (cfg_json.collection == "") cfg_json.collection = 'latest_history' ;
     return cfg_json ;
+}
+
+function storeConfig(conf){
+    let str = JSON.stringify(conf) ;
+    fs.writeFile('./config.json',str,(err)=>{
+        if (err) {
+            console.log('ERROR: unable to store conf!') ;
+            console.log(str) ;
+        }else{
+            console.log('conf stored') ;
+        }
+
+    })
+    
 }

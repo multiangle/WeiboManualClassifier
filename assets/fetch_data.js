@@ -10,6 +10,8 @@ var conf = null ;
 var batch_size = 100 ;
 
 function fetch_batch_data(){
+    if (is_fetching) return ;
+
     let collection_name = 'latest_history' ;
     let filter = {} ;
     let skip = 0 ;
@@ -22,6 +24,7 @@ function fetch_batch_data(){
     }
     console.log(filter) ;
     is_fetching = true ; 
+    console.log('info from fetch_data: start to fetching ...') ;
     MongoClient.connect(db_uri, (err,db)=>{
         let collection = db.collection(collection_name) ;
         let res ;
@@ -34,6 +37,7 @@ function fetch_batch_data(){
         res.toArray((err,docs)=>{
             data_storage = data_storage.concat(docs) ;
             is_fetching = false ;
+            console.log('info from fetch_data: data fetched') ;
         })
         db.close() ;
     })
@@ -41,6 +45,8 @@ function fetch_batch_data(){
 
 // extract necessary info from json file sent from mongo
 function pickUsefulContent(res){
+    if (res==null) return null ;
+
     let valid_res = {}
 
     // time
@@ -113,6 +119,12 @@ module.exports.input_conf = function(new_conf){
         conf = new_conf ;
         console.log(conf) ;
         acc = 0 ;
+        data_storage = new Array() ;
         fetch_batch_data() ;
     }
+}
+
+module.exports.fix_conf = function(outer_conf){
+    outer_conf.skip = outer_conf.skip+acc ;
+    return outer_conf ;
 }

@@ -6,6 +6,7 @@ var db_uri = 'mongodb://localhost:27017/microblog_spider' ;
 var data_storage = new Array() ;
 var is_fetching = false ;
 var acc = 0 ;   // 累加器
+var count = 0 ; // 累计经过了多少帖子
 var conf = null ;
 var batch_size = 100 ;
 
@@ -45,8 +46,6 @@ function fetch_batch_data(){
 
 // extract necessary info from json file sent from mongo
 function pickUsefulContent(res){
-    if (res==null) return null ;
-
     let valid_res = {}
 
     // time
@@ -89,6 +88,8 @@ function pickUsefulContent(res){
 module.exports.fetch_one = function(){
     if (data_storage.length>0){
         let res = data_storage.shift() ;
+        if (res==null) return null ;
+        count += 1 ;
         let valid_res = pickUsefulContent(res) ;
         if (data_storage.length<2) fetch_batch_data() ;
         // console.log(valid_res) ;
@@ -119,12 +120,13 @@ module.exports.input_conf = function(new_conf){
         conf = new_conf ;
         console.log(conf) ;
         acc = 0 ;
+        count = 0 ; 
         data_storage = new Array() ;
         fetch_batch_data() ;
     }
 }
 
 module.exports.fix_conf = function(outer_conf){
-    outer_conf.skip = outer_conf.skip+acc ;
+    outer_conf.skip = outer_conf.skip+count ;
     return outer_conf ;
 }

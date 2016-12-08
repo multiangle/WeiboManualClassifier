@@ -16,22 +16,30 @@
             $("input#collection").attr('placeholder',res.collection) ;
             $("input#filter").attr('placeholder',JSON.stringify(res.filter)) ;
             $("input#skip").attr('placeholder',res.skip) ;
+            $("input#single_class").attr('placeholder',res.single_class) ;
         })
         $("document").ready(()=>{
             console.log('322'); 
             $("#apply").click((e)=>{
                 let collection = $("input#collection").val() ;
                 collection = collection=="" ? config.collection : collection ;
+
                 let filter = $("input#filter").val() ;
                 filter = filter=="" ? JSON.stringify(config.filter) : filter ;
                 filter = JSON.parse(filter) ;
+
                 let skip = $("input#skip").val() ;
                 skip = skip=="" ? config.skip : skip ;
                 skip = parseInt(skip) ;
+
+                let single_class = $("input#single_class").val() ;
+                single_class = single_class=='true'? true : false ;
+
                 let res = {
                     'collection': collection,
                     'filter': filter,
-                    'skip': skip 
+                    'skip': skip, 
+                    'single_class':single_class
                 }
                 console.log(res) ;
                 ipcr.send('channel-setting-apply',res) ;
@@ -58,6 +66,8 @@
                 <input type="text" class="form-control" id="filter" placeholder="null">
                 Skip:
                 <input type="text" class="form-control" id="skip" placeholder="null">
+                Single_Class:
+                <input type="text" class="form-control" id="single_class" placeholder="null">
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-primary" type="button" id="apply">Apply</button>

@@ -21,7 +21,6 @@ var conf = readConfig() ;
 fetchData.input_conf(conf) ;
 // console.log(conf)
 
-
 //todo 还需要完成数据库的查询问题
 
 app.on('ready', createWindow)
@@ -36,7 +35,7 @@ ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送�
         dealing_data.category = res.category ;
         dealing_data.emotion = res.emotion ;
         console.log(dealing_data) ;
-        if (dealing_data.category!="" && dealing_data.emotion!="")
+        if (dealing_data.category.length>0 && dealing_data.emotion!="")
             fetchData.insert(dealing_data) ;
     }
     let new_res = fetchData.fetch_one() ; 
@@ -77,6 +76,7 @@ ipcm.on('channel-setting-apply',(event,res)=>{ // 当apply按钮被按下时的�
     else{
         conf = res ;
         fetchData.input_conf(conf) ;
+        event.sender.send('channel-setting-broadcast',conf) ;
     }
 })
 
@@ -125,7 +125,6 @@ function storeConfig(conf){
         }else{
             console.log('conf stored') ;
         }
-
     })
     
 }

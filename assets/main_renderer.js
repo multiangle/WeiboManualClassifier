@@ -5,6 +5,7 @@ const ipcr = electron.ipcRenderer ;
 const BrowserWindow = electron.BrowserWindow ;
 
 var fetch_data = require('../assets/fetch_data.js') ;
+var conf = {'single_class':true} ;
 $("document").ready(function(){
 
     // 初始化
@@ -19,10 +20,18 @@ $("document").ready(function(){
     // 在提交以后从后台获取到新数据以后的行为
     ipcr.on('channel-commit-reply',(event,res)=>{
         setDisplay(res) ;
-
         // 重置
         resetStatus() ;
     })
+
+    // 获取到setting以后的行为
+    ipcr.on('channel-setting-broadcast',(event,res)=>{
+        conf = res ;
+    })
+    ipcr.on('channel-config-ret',(event,res)=>{
+        conf = res ;
+    })
+
 
     // emotion 按钮按下以后的行为
     $(".ebtn").click((e)=>{
@@ -41,20 +50,39 @@ $("document").ready(function(){
 
     // category 按钮按下以后的行为
     $(".cbtn").click((e)=>{
-        let btn = $(e.target) ;
-        let btns = $(".cbtn").get() ;
-        for(let i in btns){
-            $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+        if (conf.single_class){
+            let btn = $(e.target) ;
+            let btns = $(".cbtn").get() ;
+            for(let i in btns){
+                $(btns[i]).removeClass('btn-primary').addClass('btn-default') ;
+            }
+            btn.removeClass('btn-default');
+            btn.addClass('btn-primary') ;
+            let btn_text = btn.text() ;
+            category_selected = btn_text.substring(0,btn_text.length-1) ;
+            console.log(category_selected) ;
+        }else{
+            let btn = $(e.target) ;
+            if (btn.attr("class").indexOf('btn-default')>=0){
+                btn.removeClass('btn-default').addClass('btn-primary') ;
+            }else{
+                btn.removeClass('btn-primary').addClass('btn-default') ;
+            }
         }
-        btn.removeClass('btn-default');
-        btn.addClass('btn-primary') ;
-        let btn_text = btn.text() ;
-        category_selected = btn_text.substring(0,btn_text.length-1) ;
-        console.log(category_selected) ;
+        
     })
 
     // commit info, and reset info
     $("button#commit").click(()=>{
+        let btns = $(".cbtn").get() ;
+        category_selected = new Array() ;
+        for(let i in btns){
+            let btn = $(btns[i]) ;
+            if (btn.attr("class").indexOf("btn-primary")>=0){
+                let btn_text = btn.text() ;
+                category_selected.push(btn_text.substring(0,btn_text.length-1)) ;
+            }
+        }
         // if (emotion_selected=="" || category_selected==""){
         //     alert("Cannot COMMIT!") ;
         //     return ;
@@ -99,6 +127,7 @@ $(document).keydown((e)=>{
 // init function
 function init(){
     ipcr.send('channel-fetch') ;// 请求获得数据
+    ipcr.send('channel-fetch-config') ; //请求获得conf
 
     emotion_selected = "" ;     // btn-group选中的情绪
     emotion_id = -1 ;

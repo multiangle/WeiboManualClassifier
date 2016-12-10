@@ -83,7 +83,7 @@ ipcm.on('channel-setting-apply',(event,res)=>{ // 当apply按钮被按下时的�
 function createWindow() {
     main_win = new BrowserWindow({
         width: 1300,
-        height: 750,
+        height: 950,
         backgroundColor: '#FFEEBF',
         show: false,
         icon:'./assets/imgs/huaji.jpg'

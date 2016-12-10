@@ -8,7 +8,8 @@
   },
   "author": "multiangle",
   "devDependencies": {
-    "electron": "^1.4.1"
+    "electron": "^1.4.1",
+    "electron-packager": "^8.4.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",

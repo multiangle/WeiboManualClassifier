@@ -113,10 +113,13 @@ $(document).keydown((e)=>{
         $(fmt+e.key).click()
         return ;
     }
-
     types = new Array('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M') ;
     if (types.indexOf(e.key)>-1) { // 跟category有关的快捷键
         $(fmt+e.key).click()
+        return ;
+    }
+    if (e.key==';'){ // ; 
+        $(fmt+'LR').click() ;
         return ;
     }
 

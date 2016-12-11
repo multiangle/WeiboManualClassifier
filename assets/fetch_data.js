@@ -106,10 +106,13 @@ module.exports.fetch_one = function(){
 module.exports.insert = function(res){
     let uri = 'mongodb://localhost:27017/microblog_classify' ;
     MongoClient.connect(uri, (err,db)=>{
-        console.log('info from insert: err: '+err) ;
-        let collection = db.collection('test') ;
-        collection.insert(res) ;
-        db.close() ;
+        if (err){
+            console.log('info from insert: can not connect to mongo') ;
+        }else{
+            let collection = db.collection('test') ;
+            collection.insert(res) ;
+            db.close() ;
+        }
     })
 }
 

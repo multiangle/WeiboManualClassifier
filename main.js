@@ -34,7 +34,7 @@ ipcm.on('channel-commit',(event,res)=>{ // 收到commit按钮按下来后发送�
     if (dealing_data){
         dealing_data.category = res.category ;
         dealing_data.emotion = res.emotion ;
-        console.log(dealing_data) ;
+        console.log(dealing_data.left_content+'\t'+dealing_data.emotion) ;
         if (dealing_data.category.length>0 && dealing_data.emotion!="")
             fetchData.insert(dealing_data) ;
     }
